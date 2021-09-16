@@ -1,0 +1,6 @@
+boot:
+  sso:
+    client:
+      ignore-urls:
+        - /**
+debug: true
