@@ -55,6 +55,5 @@ spec:
       port: 7777
       targetPort: 7777
       protocol: TCP
-      nodePort: 37777
   selector:
     app: arthas
