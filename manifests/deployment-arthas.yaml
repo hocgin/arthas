@@ -23,8 +23,10 @@ spec:
           imagePullPolicy: Always
           args: [ "--spring.profiles.active=${ACTIVE}" ]
           ports:
-            - containerPort: 8080
-            - containerPort: 7777
+            - name: web
+              containerPort: 8080
+            - name: ws
+              containerPort: 7777
           envFrom:
             - configMapRef:
                 name: cm-service-env
