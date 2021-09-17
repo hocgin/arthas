@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,5 +40,10 @@ public class IndexController {
             item.setVersion(value.getArthasVersion());
             return item;
         }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/user")
+    public Principal me(Principal principal) {
+        return principal;
     }
 }
