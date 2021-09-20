@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        System.out.println(StrUtil.format("[{}]用户触发: {}", new Date(), evt));
+        System.out.println(StrUtil.format("[{}]用户触发: {}", new Date(), JSON.toJSONString(evt)));
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete handshake = (HandshakeComplete) evt;
             // http request uri
