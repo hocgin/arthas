@@ -3,6 +3,7 @@ arthas:
   server:
     host: 0.0.0.0
     port: 7777
+    ssl: true
   enable-detail-pages: true
 
 spring:
