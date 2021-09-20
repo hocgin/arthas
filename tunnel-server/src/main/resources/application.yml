@@ -3,6 +3,7 @@ arthas:
   server:
     host: 0.0.0.0
     port: 7777
+    ssl: true
   enable-detail-pages: true
 
 spring:
@@ -17,6 +18,11 @@ spring:
       spec: maximumSize=3000,expireAfterAccess=3600s
 server:
   port: 8080
+  # keytool -genkey -v -keystore arthas.keystore -alias arthas -keyalg RSA -validity 20000 -keystore /Users/hocgin/Projects/arthas/tunnel-server/src/main/resources/arthas.keystore
+  ssl:
+    key-password: hocgin
+    key-alias: arthas
+    key-store: classpath:arthas.keystore
 
 # for all endpoints
 management:
