@@ -72,6 +72,7 @@ public class ProxyController {
                     .queryParam(URIConstans.TARGET_URL, targetUrl).queryParam(URIConstans.PROXY_REQUEST_ID, requestId)
                     .build().toUri();
 
+            logger.info("AGENT 查询:[{}], 目标:[{}], 传输信息:[{}]", agentId, findAgent.get(), uri);
             agentCtx.channel().writeAndFlush(new TextWebSocketFrame(uri.toString()));
             logger.info("waitting for arthas agent http proxy, agentId: {}, targetUrl: {}", agentId, targetUrl);
 

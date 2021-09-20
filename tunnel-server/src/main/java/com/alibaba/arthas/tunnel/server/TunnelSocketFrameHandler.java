@@ -39,7 +39,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 
 /**
- * 
+ *
  * @author hengyunabc 2019-08-27
  *
  */
@@ -84,6 +84,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String text = textFrame.text();
+            logger.info("接收到消息: {}", text);
 
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(text).build()
                     .getQueryParams();
@@ -114,6 +115,8 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
                 promise.setSuccess(simpleHttpResponse);
             }
+        } else {
+            logger.info("其他类型，接收到消息: {}", frame.getClass());
         }
     }
 
@@ -185,6 +188,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 }
             });
 
+            logger.info("AGENT 查询:[{}], 目标:[{}], 传输信息:[{}]", agentId, findAgent.get(), uri);
             agentCtx.channel().writeAndFlush(new TextWebSocketFrame(uri.toString()));
 
             logger.info("browser connect waitting for arthas agent open tunnel");
@@ -269,6 +273,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             info.setArthasVersion(arthasVersion);
         }
 
+        logger.info("保存AGENT [{}]", requestUri);
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
@@ -288,6 +293,8 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             ClientConnectionInfo info = infoOptional.get();
             logger.info("openTunnel clientConnectionId:" + clientConnectionId);
 
+            // 转发数据包
+            logger.info("桥接数据包");
             Promise<Channel> promise = info.getPromise();
             promise.setSuccess(ctx.channel());
         } else {
