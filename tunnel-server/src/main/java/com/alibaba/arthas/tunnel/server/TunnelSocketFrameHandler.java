@@ -273,7 +273,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             info.setArthasVersion(arthasVersion);
         }
 
-        logger.info("保存AGENT [{}]", requestUri);
+        logger.info("[注册上线]保存AGENT [{}]", requestUri);
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
@@ -294,9 +294,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("openTunnel clientConnectionId:" + clientConnectionId);
 
             // 转发数据包
-            logger.info("桥接数据包");
+            logger.info("[打开控制台] 桥接数据包");
             Promise<Channel> promise = info.getPromise();
-            promise.setSuccess(ctx.channel());
+//            promise.setSuccess(ctx.channel());
         } else {
             logger.error("Can not find client connection by id: {}", clientConnectionId);
         }
