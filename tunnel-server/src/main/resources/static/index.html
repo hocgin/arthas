@@ -20,11 +20,12 @@
 
 
     <script type="text/javascript">
-        window.addEventListener('resize', function () {
+        let onResize = function () {
             var terminalSize = getTerminalSize();
             ws.send(JSON.stringify({action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows}));
             xterm.resize(terminalSize.cols, terminalSize.rows);
-        });
+        };
+        window.addEventListener('resize', onResize);
     </script>
 
     <link href="xterm.css" rel="stylesheet"/>
@@ -64,7 +65,7 @@
             </ul>
         </div>
 
-        <form class="form-inline my-2 my-lg-0 toolput">
+        <form class="form-inline my-2 my-lg-0 toolput" v-show="isShow">
             <div class="col-12 col-md-4">
                 <div class="input-group ">
                     <div class="input-group-prepend">
@@ -106,11 +107,10 @@
                     Disconnect
                 </button>
                 <a id="arthasOutputA" target="_blank" href="arthas-output/" class="btn btn-info" role="button"
-                   onclick="updateArthasOutputLink()">Arthas Output</a>
+                   onclick="updateArthasOutputLink()">Output</a>
             </div>
-
         </form>
-
+        <div class="toggle" @click="onToggle">{{isShow ? '⬆' : '⬇'}}</div>
     </nav>
 
     <div class="container-fluid px-0">
@@ -135,6 +135,7 @@
                 ip: host,
                 port: port,
                 agentId: '',
+                isShow: true,
                 agentList: [],
             };
         },
@@ -147,6 +148,9 @@
                     console.log('api error ' + error)
                 });
             },
+            onToggle: function () {
+                this.isShow = !this.isShow;
+            }
         },
         mounted: function () {
             this.fetchAgentList();

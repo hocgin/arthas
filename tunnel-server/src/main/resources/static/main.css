@@ -1,10 +1,12 @@
-#terminal:-webkit-full-screen{
+#terminal:-webkit-full-screen {
     background-color: rgb(255, 255, 12);
 }
+
 .container {
     width: 100%;
     min-height: 600px;
 }
+
 .fullSc {
     z-index: 10000;
     position: fixed;
@@ -12,8 +14,9 @@
     left: 90%;
     display: none;
 }
+
 #fullScBtn {
-    border-radius:17px;
+    border-radius: 17px;
     border: 0;
     cursor: pointer;
     background-color: black;
@@ -23,17 +26,34 @@
     display: flex;
     justify-content: end;
 }
+
 .toolbar > button, .toolbar > a {
     margin-left: 10px;
     margin-right: 10px;
 }
+
 .toolput > div {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.toggle {
+    display: none;
+    text-align: center;
+    font-size: .75em;
+}
+
 @media only screen and (max-width: 800px) {
     .toolbar {
         display: flex;
         justify-content: space-around;
     }
+
+    .toggle {
+        display: inline-block;
+    }
+}
+
+* {
+    animation: animation-heartbeat 1.3s ease 0s infinite normal
 }
