@@ -80,6 +80,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        logger.debug("接收到消息");
         // 只有 arthas agent register建立的 channel 才可能有数据到这里
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
@@ -296,7 +297,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             // 转发数据包
             logger.info("[打开控制台] 桥接数据包");
             Promise<Channel> promise = info.getPromise();
-//            promise.setSuccess(ctx.channel());
+            promise.setSuccess(ctx.channel());
         } else {
             logger.error("Can not find client connection by id: {}", clientConnectionId);
         }
