@@ -55,6 +55,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        logger.debug("接收到用户事件: {}", evt);
         if (evt instanceof HandshakeComplete) {
             HandshakeComplete handshake = (HandshakeComplete) evt;
             // http request uri
