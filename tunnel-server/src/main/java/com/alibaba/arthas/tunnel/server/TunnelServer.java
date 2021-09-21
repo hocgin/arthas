@@ -40,8 +40,14 @@ public class TunnelServer {
     private int port;
     private String path = ArthasConstants.DEFAULT_WEBSOCKET_PATH;
 
+    /**
+     * AC 列表
+     */
     private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
 
+    /**
+     * AB 列表
+     */
     private Map<String, ClientConnectionInfo> clientConnectionInfoMap = new ConcurrentHashMap<String, ClientConnectionInfo>();
     
     /**

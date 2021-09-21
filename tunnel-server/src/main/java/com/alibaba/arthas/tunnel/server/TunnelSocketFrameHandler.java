@@ -66,11 +66,11 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
             String method = parameters.getFirst(URIConstans.METHOD);
 
-            // [AB 操作] 连接 AC
+            // [AB 操作] 建立连接(AB注册)
             if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
             }
-            // [AC 操作] 注册
+            // [AC 操作] AC注册
             else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
                 agentRegister(ctx, handshake, uri);
             }
@@ -128,6 +128,13 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         }
     }
 
+    /**
+     * AB 注册
+     * 事件触发者: AB
+     * @param tunnelSocketCtx
+     * @param parameters
+     * @throws URISyntaxException
+     */
     private void connectArthas(ChannelHandlerContext tunnelSocketCtx, MultiValueMap<String, String> parameters)
             throws URISyntaxException {
 
@@ -140,6 +147,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
         logger.info("try to connect to arthas agent, id: " + agentId.get(0));
 
+        // 查找AB要连接的AC
         Optional<AgentInfo> findAgent = tunnelServer.findAgent(agentId.get(0));
 
         if (findAgent.isPresent()) {
@@ -177,6 +185,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                         // outboundChannel is form arthas agent
                         outboundChannel.pipeline().removeLast();
 
+                        logger.debug("[AB+AC]连接成功，添加 RelayHandler");
                         outboundChannel.pipeline().addLast(new RelayHandler(tunnelSocketCtx.channel()));
                         tunnelSocketCtx.pipeline().addLast(new RelayHandler(outboundChannel));
                     } else {
@@ -192,6 +201,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             tunnelSocketCtx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
+                    logger.debug("[AB] 断开连接，移除连接");
                     tunnelServer.removeClientConnectionInfo(clientConnectionId);
                 }
             });
@@ -219,6 +229,14 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         }
     }
 
+    /**
+     * AC 注册
+     * 事件触发者: AC
+     * @param ctx
+     * @param handshake
+     * @param requestUri
+     * @throws URISyntaxException
+     */
     private void agentRegister(ChannelHandlerContext ctx, HandshakeComplete handshake, String requestUri) throws URISyntaxException {
         QueryStringDecoder queryDecoder = new QueryStringDecoder(requestUri);
         Map<String, List<String>> parameters = queryDecoder.parameters();
@@ -308,7 +326,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("openTunnel clientConnectionId:" + clientConnectionId);
 
             // 转发数据包
-            logger.info("[打开控制台] 桥接数据包");
+            logger.info("[打开控制台] 桥接数据包, AC 放入 AB 内");
             Promise<Channel> promise = info.getPromise();
             promise.setSuccess(ctx.channel());
         } else {
