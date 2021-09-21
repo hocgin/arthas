@@ -188,6 +188,15 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                         logger.debug("[AB+AC]连接成功，添加 RelayHandler");
                         outboundChannel.pipeline().addLast(new RelayHandler(tunnelSocketCtx.channel()));
                         tunnelSocketCtx.pipeline().addLast(new RelayHandler(outboundChannel));
+
+
+                        new Timer().scheduleAtFixedRate(new TimerTask() {
+                            @Override
+                            public void run() {
+                                tunnelSocketCtx.channel().writeAndFlush("666");
+                                System.out.println("定时发送消息");
+                            }
+                        }, 1000, 10000);
                     } else {
                         logger.error("wait for agent connect error. agentId: {}, clientConnectionId: {}", agentId,
                                 clientConnectionId);

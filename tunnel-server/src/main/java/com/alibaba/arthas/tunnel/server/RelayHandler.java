@@ -1,5 +1,6 @@
 package com.alibaba.arthas.tunnel.server;
 
+import cn.hutool.core.util.ClassUtil;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (relayChannel.isActive()) {
-            logger.debug("转发AC数据到AB?: [{}]", JSON.toJSONString(msg));
+            logger.debug("转发AC数据到AB?: [{}]", ClassUtil.getClass(msg));
             relayChannel.writeAndFlush(msg);
         } else {
             logger.debug("通道被关闭了?: [{}]", JSON.toJSONString(msg));
