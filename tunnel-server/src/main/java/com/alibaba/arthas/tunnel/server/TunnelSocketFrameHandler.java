@@ -66,11 +66,15 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
             String method = parameters.getFirst(URIConstans.METHOD);
 
+            // [AB 操作] 连接 AC
             if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
-            } else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
+            }
+            // [AC 操作] 注册
+            else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
                 agentRegister(ctx, handshake, uri);
             }
+            // [AC 操作] 打开
             if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
                 String clientConnectionId = parameters.getFirst(URIConstans.CLIENT_CONNECTION_ID);
                 openTunnel(ctx, clientConnectionId);
@@ -192,8 +196,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 }
             });
 
-            logger.info("AGENT 查询:[{}], 目标:[{}], 传输信息:[{}]", agentId, findAgent.get(), uri);
+            logger.debug("[connectArthas] AGENT 查询:[{}], 目标:[{}], 传输信息:[{}]", agentId, findAgent.get(), uri);
             agentCtx.channel().writeAndFlush(new TextWebSocketFrame(uri.toString()));
+            logger.debug("[connectArthas] 发送数据: {}", uri);
 
             logger.info("browser connect waitting for arthas agent open tunnel");
             boolean watiResult = promise.awaitUninterruptibly(20, TimeUnit.SECONDS);
@@ -277,19 +282,24 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             info.setArthasVersion(arthasVersion);
         }
 
-        logger.info("[注册上线]保存AGENT [{}]", requestUri);
+        logger.info("[agentRegister] 保存AGENT [{}:{}]", id, info);
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
             public void operationComplete(Future<? super Void> future) throws Exception {
                 tunnelServer.removeAgent(finalId);
             }
-
         });
 
         ctx.channel().writeAndFlush(new TextWebSocketFrame(responseUri.toString()));
+        logger.debug("[agentRegister] 发送数据: {}", responseUri);
     }
 
+    /**
+     * 事件触发者: AC
+     * @param ctx
+     * @param clientConnectionId
+     */
     private void openTunnel(ChannelHandlerContext ctx, String clientConnectionId) {
         Optional<ClientConnectionInfo> infoOptional = this.tunnelServer.findClientConnection(clientConnectionId);
 
