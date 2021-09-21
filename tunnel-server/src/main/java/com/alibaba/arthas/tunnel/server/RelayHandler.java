@@ -32,6 +32,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
             logger.debug("转发AC数据到AB?: [{}]", JSON.toJSONString(msg));
             relayChannel.writeAndFlush(msg);
         } else {
+            logger.debug("通道被关闭了?: [{}]", JSON.toJSONString(msg));
             ReferenceCountUtil.release(msg);
         }
     }
