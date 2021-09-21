@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -56,7 +57,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof HandshakeComplete) {
-            logger.debug("接收到用户握手事件: {}", evt);
+            logger.debug("接收到用户握手事件(HandshakeComplete): {}", JSON.toJSONString(evt));
             HandshakeComplete handshake = (HandshakeComplete) evt;
             // http request uri
             String uri = handshake.requestUri();
@@ -75,7 +76,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 openTunnel(ctx, clientConnectionId);
             }
         } else {
-            logger.debug("接收到用户其他事件: {}", JSON.toJSONString(evt));
+            logger.debug("接收到用户其他事件({}): {}", ClassUtil.getClass(evt), JSON.toJSONString(evt));
             ctx.fireUserEventTriggered(evt);
         }
     }
