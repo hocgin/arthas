@@ -14,30 +14,37 @@
     <script src="jquery-3.3.1.slim.min.js"></script>
     <script src="popper-1.14.6.min.js"></script>
     <script src="bootstrap-4.2.1.min.js"></script>
+    <script src="https://g.alicdn.com/code/lib/vue/2.6.4/vue.min.js"
+            integrity="sha256-isEQDc5Dw7wea1s5iMZjBvPuYzjzMrvtlPwE6LtavFA=" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/axios/0.18.0/axios.min.js"></script>
 
 
     <script type="text/javascript">
         window.addEventListener('resize', function () {
             var terminalSize = getTerminalSize();
-            ws.send(JSON.stringify({ action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows }));
+            ws.send(JSON.stringify({action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows}));
             xterm.resize(terminalSize.cols, terminalSize.rows);
         });
     </script>
 
-    <link href="xterm.css" rel="stylesheet" />
-    <link href="main.css" rel="stylesheet" />
+    <link href="xterm.css" rel="stylesheet"/>
+    <link href="main.css" rel="stylesheet"/>
     <script src="xterm.js" type="text/javascript"></script>
     <script src="web-console.js"></script>
     <title>Arthas Console</title>
 </head>
-
 <body>
+<div id="app">
     <nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row bd-navbar">
-        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand"><img src="logo.png"
-                alt="Arthas" title="Welcome to Arthas web console" style="height: 25px;" class="img-responsive"></a>
+        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand">
+            <img src="logo.png"
+                 alt="Arthas"
+                 title="Welcome to Arthas web console"
+                 style="height: 25px;"
+                 class="img-responsive"></a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -48,7 +55,8 @@
                         <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online Tutorials</a>
+                    <a class="nav-link" href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
+                        Tutorials</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://github.com/alibaba/arthas" target="_blank">Github</a>
@@ -56,41 +64,49 @@
             </ul>
         </div>
 
-        <form class="form-inline my-2 my-lg-0">
-            <div class="col">
+        <form class="form-inline my-2 my-lg-0 toolput">
+            <div class="col-12 col-md-4">
                 <div class="input-group ">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="ip-addon">IP</span>
                     </div>
                     <input value="127.0.0.1" v-model="ip" type="text" class="form-control" name="ip" id="ip"
-                        placeholder="please enter ip address" aria-label="ip" aria-describedby="ip-addon">
+                           placeholder="please enter ip address" aria-label="ip" aria-describedby="ip-addon">
                 </div>
             </div>
 
-            <div class="col">
+            <div class="col-12 col-md-4">
                 <div class="input-group ">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="port-addon">Port</span>
                     </div>
                     <input value="7777" v-model="port" type="text" class="form-control" name="port" id="port"
-                        placeholder="please enter port" aria-label="port" aria-describedby="port-addon">
+                           placeholder="please enter port" aria-label="port" aria-describedby="port-addon">
                 </div>
             </div>
 
-            <div class="col">
+            <div class="col-12 col-md-4">
                 <div class="input-group ">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="agentId-addon">AgentId</span>
                     </div>
                     <input value="" v-model="agentId" type="text" class="form-control" name="agentId" id="agentId"
-                        placeholder="please enter agentId" aria-label="agentId" aria-describedby="agentId-addon">
+                           list="agentGroup"
+                           placeholder="please enter agentId" aria-label="agentId" aria-describedby="agentId-addon">
+                    <datalist id="agentGroup">
+                        <option v-for="(item) in agentList">{{item.agentId}}</option>
+                    </datalist>
                 </div>
             </div>
 
-            <div class="col-inline">
-                <button title="connect" type="button" class="btn btn-info form-control" onclick="startConnect()">Connect</button>
-                <button title="disconnect" type="button" class="btn btn-info form-control" onclick="disconnect()">Disconnect</button>
-                <a id="arthasOutputA" target="_blank" href="arthas-output/" class="btn btn-info" role="button" onclick="updateArthasOutputLink()">Arthas Output</a>
+            <div class="col-inline col-12 toolbar">
+                <button title="connect" type="button" class="btn btn-info form-control" onclick="startConnect()">Connect
+                </button>
+                <button title="disconnect" type="button" class="btn btn-info form-control" onclick="disconnect()">
+                    Disconnect
+                </button>
+                <a id="arthasOutputA" target="_blank" href="arthas-output/" class="btn btn-info" role="button"
+                   onclick="updateArthasOutputLink()">Arthas Output</a>
             </div>
 
         </form>
@@ -106,6 +122,35 @@
     <div title="fullscreen" id="fullSc" class="fullSc">
         <button id="fullScBtn" onclick="xtermFullScreen()"><img src="fullsc.png"></button>
     </div>
+</div>
 </body>
 
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: () => {
+            let port = window.location.protocol.startsWith('https') ? 443 : 7777;
+            let host = window.location.hostname;
+            return {
+                ip: host,
+                port: port,
+                agentId: '',
+                agentList: [],
+            };
+        },
+        methods: {
+            fetchAgentList: function () {
+                var vm = this;
+                axios.get('/agent/list').then(function (response) {
+                    vm.agentList = response.data
+                }).catch(function (error) {
+                    console.log('api error ' + error)
+                });
+            },
+        },
+        mounted: function () {
+            this.fetchAgentList();
+        }
+    })
+</script>
 </html>

@@ -18,3 +18,22 @@
     cursor: pointer;
     background-color: black;
 }
+
+.toolbar {
+    display: flex;
+    justify-content: end;
+}
+.toolbar > button, .toolbar > a {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.toolput > div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+@media only screen and (max-width: 800px) {
+    .toolbar {
+        display: flex;
+        justify-content: space-around;
+    }
+}
